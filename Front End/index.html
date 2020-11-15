@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Coin Flip DApp</title>
+    <link rel="shortcut icon" type="image/jpg" href="CrazyCanadia_Favicon.png"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="./web3.min.js"></script>
+    <script type="text/javascript" src="./abi.js"></script>
+    <script type="text/javascript" src="./main.js"></script>
+    <script type="text/javascript" src="./helperFunctions.js"></script>
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="shortcut icon" href="#" />
+    <style>
+      .owner {
+        display: none;
+      }
+      .notify_text {
+        display: none;
+      }
+      .overlay {
+        position:absolute;
+        top:0;left:0;right:0;bottom:1;
+      }
+      .rules {
+        position: fixed;
+        display: none;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.7);
+        z-index: 2;
+        cursor: pointer;
+      }
+      .rulesText{
+        position: absolute;
+        padding-top: 50px;
+        padding-left: 50px;
+        color: white;
+      }
+      .my-modal{
+        z-index: 3;
+      }
+      .etherscan{
+        position: absolute;
+        right: 0;
+        padding-right: 20px;
+        color: grey;
+      }
+    </style>
+
+  </head>
+  <body>
+    <div class="container my-5 mx-auto">
+        <div class="modal fade" id="myModal">
+          <div class="modal-dialog">
+            <div class="modal-content my-modal">
+
+              <!-- Modal Header -->
+              <div class="modal-header">
+                <img id="CC_logo" src="CrazyCanadia_Favicon.png" height="40px" width="40px" class="modal-title my-2 mx-4">
+                <h1 class="modal-title text-center">  Coin Flip Dapp</h1>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+              </div>
+              <!-- Modal body -->
+              <div class="modal-body">
+                  <!-- Nav tabs -->
+                  <ul class="nav nav-pills">
+                    <li class="nav-item">
+                      <a class="nav-link active" data-toggle="tab" href="#home">Betting</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" data-toggle="tab" href="#menu1">Liquidity</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" data-toggle="tab" href="#menu2">Withdrawing</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" data-toggle="tab" href="#menu3">Information</a>
+                    </li>
+                  </ul>
+
+                  <!-- Tab panes -->
+                  <div class="tab-content">
+                    <div id="home" class="container tab-pane active"><br>
+                      <h3>Betting</h3>
+                      <p>You can choose heads or tails then bet an amount of Eth.<br><br>
+                        The minimum bet is .01 Eth. The maximum bet is 2.005 Eth. The fee for processing is .005 Eth and is deducted before your bet is placed.
+                        For example, a typed bet of 1.005 Eth will be processed as a bet of 1 Eth after fees of 0.005 and then officailly be wagered as 1 Eth.<br>
+                        <p  class="text-center">1.005 Eth bet --->  0.005 Eth fee + 1 Eth bet</p>
+                        <p>The fee is to help ensure liquidity is given from the providers and for the secure random number generation.</p>
+                        <p>It takes a minute or two to get a response from the thrid party oracle providing the random number. Please be patient.</p>
+                        <p>After winning, your bet will be displayed as a balance on the smart contract. You can then click the withdraw button to collect your winnings.
+                        Your bet will be doubled given a winning scenario. Good Luck!</p>
+                      </p>
+                    </div>
+                    <div id="menu1" class="container tab-pane fade"><br>
+                      <h3>Providing Liquidity</h3>
+                      <p>If you want to become a liquidity provider, you may earn money.
+                      To provide liquidity to this contract, you can click the Provide Liquidity button and send the contract some funds.
+                      Your funds will automatically be put into the smart contract liquidity pool and upon the contract earning money,
+                      your earnings will be proportionate to your deposit's percentage of the collective liquidity pool.</p><br>
+                        <p class="text-center" >*****You may lose money.*****</p><br>
+                      <p>It is possible to lose money. If you deposit liquidity into the contract and the users win more than lose,
+                      the liquidity pool and the value of your percentage of it will decrease. Over time the 50/50 percentages will balance out.</p><br><br>
+                      </div>
+                      <div id="menu2" class="container tab-pane fade"><br>
+                        <h3>Withdawing</h3>
+                        <p>When withdrawing money, you will need to use the same address used to make the winning bet or add liquidity.
+                        The withdraw function requires the user to withdraw all funds from the contract.
+                        This will withdraw all winnings and all of your share of the liquidity pool. There are no partial withdraws.</p>
+                          <br><br>
+                      </div>
+                      <div id="menu3" class="container tab-pane fade"><br>
+                        <h3>Information</h3>
+                          <p>This was made as an educational project. It should ***NOT*** be used for mainnet deployment.
+                            Any use of this contract is done so at your own risk. There may be bugs, problems, and potential vulnerabilities.
+                            In case of emergency the creator of this contract can destroy it. If the contract is ever deactivated all useres
+                            can still withdraw their liquidity and/or contract balances before final closing.</p>
+                            <p>All balances shown are not exact due to gas fees and rounding.</p>
+                          <p>The coin animation was found here: https://www.artstation.com/artwork/lVGY5O <br> created by Rade Radevski</p><br>
+                          <p class="text-center" >This Dapp has been a @CrazyCanadia creation.</p>
+                      </div>
+                      </div>
+              </div>
+
+              <!-- Modal footer -->
+              <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      <div class="card mx-auto shadow" style="width: 25rem;">
+        <div id="winner_notice" class="overlay card-body bg-success text-white text-center notify_text">
+        </div>
+        <div id="loser_notice" class="overlay card-body bg-warning text-white text-center notify_text">
+        </div>
+        <div id="destroy_notice" class="overlay card-body bg-danger text-white text-center notify_text">
+        </div>
+        <div id="deposit_notice" class="overlay card-body bg-info text-white text-center notify_text">
+        </div>
+        <div id="withdraw_notice" class="overlay card-body bg-info text-white text-center notify_text">
+        </div>
+        <div id="error_notice" class="overlay card-body bg-danger text-white text-center notify_text">
+        </div>
+        <div id="owner_notice" class="overlay card-body bg-secondary text-white text-center notify_text">
+        </div>
+        <div id="provider_notice" class="overlay card-body bg-secondary text-white text-center notify_text">
+        </div>
+        <div id="hello_notice" class="overlay card-body bg-secondary text-white text-center notify_text">
+        </div>
+        <div id="waiting_notice" class="overlay card-body bg-info text-white text-center notify_text">
+        </div>
+        <div id="closingDown_notice" class="overlay card-body bg-warning text-white text-center notify_text">
+        </div>
+        <div id="waitingForProviders_notice" class="overlay card-body bg-warning text-white text-center notify_text">
+        </div>
+        <!--<div id="cancel_notice" class="overlay card-body bg-danger text-white text-center notify_text">
+        </div>  The related cancel function has been deprecated-->
+
+        <div>
+          <h1 class="card-title mx-auto text-center">Coin Flip Dapp</h1>
+        </div>
+        <div class="container">
+          <img id="coinImage" src="coin.jpg" height="160px" width="120px" class="card-img-top" onclick="notify('rulesOn')" alt="https://www.artstation.com/artwork/lVGY5O created by Rade Radevski">
+          <img id="coinAnimate" src="coin.gif" height="160px" width="120px" class="card-img-top notify_text" alt="https://www.artstation.com/artwork/lVGY5O created by Rade Radevski">
+          <!-- The coin animation was created by Rade Radevski and downloaded from https://www.artstation.com/artwork/lVGY5O -->
+        </div>
+        <div class="card-body">
+
+          <div id="coms_section">
+            <div class="d-flex justify-content-center">
+              <p id="betMessage" class="card-text-center" id="game_title">Make a bet on heads or tails to win!</p>
+              <div id="spinner" class="spinner-border text-warning notify_text"></div>
+              <div id="sendingMessage" class="mx-3 my-1 notify_text" ><p>Sending the transaction...</p></div>
+              <div id="sentMessage" class="mx-3  my-1 notify_text" ><p>The transaction was sent...</p></div>
+              <div id="waitingMessage" class="mx-3  my-1 notify_text" ><p>Awaiting a response...</p></div>
+              <div id="closingMessage" class="mx-3  my-1 notify_text" ><p>The contract is closing. Withdraw your funds.</p></div>
+              <div id="deletedMessage" class="mx-3  my-1 notify_text" ><p>The contract has been destroyed.</p></div>
+            </div>
+          </div>
+          <div id="progress_bar" class="mx-5">
+            <div id="color_bar" class="progress-bar bg-primary progress-bar-striped progress-bar-animated notify_text text-dark mb-1" style="width:0%">Estimated wait time...</div>
+            <div id="color_bar_yellow" class="progress-bar bg-warning progress-bar-striped progress-bar-animated notify_text text-dark mb-1" style="width:0%">It should be soon, really...</div>
+          </div>
+
+          <div id="betting_section" >
+            <div class="input-group mb-3">
+              <select class="custom-select mb-3 mx-5 shadow-sm" id="input_heads_tails">
+                <option value="0">Heads</option>
+                <option value="1">Tails</option>
+              </select>
+            </div>
+            <div class="flex-container">
+              <form class="form-inline mx-3">
+                <div>
+                  <label class="sr-only">Bet Amount</label>
+                  <input class="form-control ml-3 shadow-sm" autocomplete="off" id="bet_amount" placeholder="From 0.01 to 2.005">
+                  <a href="#" id="fee_notice" data-toggle="popover" title="The fee is" data-content="0.005 Eth"></a>
+                </div>
+                <div class="input-group ml-3">
+                  <select class="custom-select shadow-sm" id="input_denomination">
+                    <option value="ether">Eth</option>
+                  </select>
+                </div>
+              </form>
+            </div>
+            <div class="d-flex justify-content-center mt-3">
+              <p id="contract_balance_eth" class="mx-1"></p>
+            </div>
+            <div class="d-flex justify-content-center">
+              <button class="btn btn-primary m-3 shadow-sm" id="place_bet">Place Your Bet</button>
+              <!-- Deprecated cancel button <button class="btn btn-danger m-3 shadow-sm notify_text" id="cancel_bet">Cancel Your Bet</button>-->
+              <div id="etherscan_icon" class="fas fa-external-link mt-3 mx-5 etherscan notify_text" style='font-size:24px'></div>
+            </div>
+          </div>
+
+          <div id="adding_section">
+            <div class="d-flex justify-content-center">
+              <form class="form-inline">
+                <div>
+                  <label class="sr-only">Deposit Amount</label>
+                  <input class="form-control mx-3 shadow-sm" id="deposit_amount" placeholder="How much to deposit?">
+                </div>
+                <div class="input-group">
+                  <select class="custom-select shadow-sm" id="deposit_denomination">
+                    <option value="ether">Eth</option>
+                  </select>
+                </div>
+              </form>
+            </div>
+            <div class="d-flex justify-content-center m-3">
+              <button class="btn btn-warning shadow-sm" id="deposit_button">Add Liquidity</button>
+            </div>
+          </div>
+
+          <div id="withdraw_section" class="owner mt-2">
+            <div class="d-flex justify-content-center">
+              <p id="contract_provider_balance" class="mx-1"></p>
+            </div>
+            <div class="d-flex justify-content-center m-3">
+              <button class="btn btn-warning shadow-sm" id="withdraw_button">Withdraw</button>
+            </div>
+          </div>
+
+          <div id="owner_section" class="owner mt-2">
+            <div class="d-flex justify-content-center m-5">
+              <button class="btn btn-danger shadow-sm" id="destroy_button">DESTROY</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "coin-flip",
+  "version": "1.0.0",
+  "description": "This is a Coin Flip betting project by CrazyCanadia",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "CrazyCanadia",
+  "license": "ISC",
+  "dependencies": {
+    "@popperjs/core": "^2.5.4",
+    "@truffle/hdwallet-provider": "^1.2.0"
+  },
+  "devDependencies": {}
+}
