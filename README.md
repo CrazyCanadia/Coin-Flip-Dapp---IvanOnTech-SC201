@@ -1,4 +1,4 @@
-# Coin-Flip-Dapp---IvanOnTech-SC201
+# Coin-Flip-Dapp  ---> IvanOnTech-SC201
 
 **Warning: For educational purposes only.**
 This is a Coin Flip betting Dapp built for educational purposes only.
