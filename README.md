@@ -1,7 +1,6 @@
-# Coin-Flip-Dapp---IvanOnTech-SC201
+# Coin-Flip-Dapp  ---> IvanOnTech-SC201
 
-**Warning: For educational purposes only.**
-This is a Coin Flip betting Dapp built for educational purposes only.
+**This is a Coin Flip betting Dapp built for educational purposes only.**
 
 
 This is a Coin Flip betting dapp built for the ethereum ecosystem. It has been made for educational purposes only as the final assignment in the IvanOnTech Academy's Ethereum Smart Contract Programming 201 course. This may, and almost certainly, contains bugs, errors, and inefficiencies. This is not intended for mainnet use. This is only intended for testnet play and discovery.
