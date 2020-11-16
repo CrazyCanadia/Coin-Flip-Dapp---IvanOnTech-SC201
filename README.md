@@ -12,7 +12,7 @@ If you gain some knowledge from this, I am glad. I have certainly learned a lot 
 In short, you pick heads or tails and bet on the flip of a coin. In the background, the contracts are receiving funds, as bets against a community created liquidity pool. For each bet the contract requests a random number using the ProvableAPI (https://github.com/provable-things/ethereum-api). This Oracle service fulfills the request by sending back a random number. Upon which this contract acts to verify your win or loss.
 
 ## Contract address
-<a href="https://ropsten.etherscan.io/address/0x0B311F2C3Aa1c851A32F81c61d80e3d8C0DF9883">This contract is deployed at this address (Ropsten Testnet): 0x0B311F2C3Aa1c851A32F81c61d80e3d8C0DF9883</a>
+This contract is deployed at this address (Ropsten Testnet):<a href="https://ropsten.etherscan.io/address/0x0B311F2C3Aa1c851A32F81c61d80e3d8C0DF9883"> 0x0B311F2C3Aa1c851A32F81c61d80e3d8C0DF9883</a>
 Please use the "Front End" folder and files in this repository. You can start a local http server using "python -m http.server" in your terminal or powershell from the "Front End" directory. After that you can user your web browser at "localhost:xxxx" (were 'xxxx' is your port number, usually 8000). Be sure to connect your Metamask to the Ropsten network.
 
 This has been an incredibly valuable learning experience. Thanks to IvanOnTech Academy (https://academy.ivanontech.com/).
