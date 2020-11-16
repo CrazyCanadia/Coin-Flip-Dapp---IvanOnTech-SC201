@@ -16,3 +16,20 @@ Please use the "Front End" folder and files in this repository. You can start a 
 This has been an incredibly valuable learning experience. Thanks to IvanOnTech Academy (https://academy.ivanontech.com/).
 
                             **-For Educational Purposes Only-**
+                         
+**Installation:**
+
+Clone the repo
+```
+gh repo clone CrazyCanadia/Coin-Flip-Dapp---IvanOnTech-SC201
+```
+
+Install NPM packages
+```
+npm install
+```
+
+run python local web server (localhost:8000)
+```
+python3 -m http.server
+```
