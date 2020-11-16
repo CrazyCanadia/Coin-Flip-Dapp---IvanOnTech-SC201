@@ -11,7 +11,7 @@ In short, you pick heads or tails and bet on the flip of a coin. In the backgrou
 
 **Contract address:**
 This contract is deployed on the Ropsten Testnet at this address 0x0B311F2C3Aa1c851A32F81c61d80e3d8C0DF9883.
-Please use the "Front End" folder and files in this repository. You can start a local http server using "python -m http.server" in your terminal or powershell from the "Front End" directory. After that you can user your web browser at "localhost:xxxx" (were 'xxxx' is your port number, usually 8000). Be sure to connect your Metamask to the Ropsten network.
+
 
 This has been an incredibly valuable learning experience. Thanks to IvanOnTech Academy (https://academy.ivanontech.com/).
 
@@ -19,17 +19,19 @@ This has been an incredibly valuable learning experience. Thanks to IvanOnTech A
                          
 **Installation:**
 
-Clone the repo
+Clone the repo / npm install in the root / http.server from "Front End" directory. You can start a local http server using "python -m http.server" in your terminal or powershell from the "Front End" directory. After that you can user your web browser at "localhost:xxxx" (were 'xxxx' is your port number, usually 8000). Be sure to connect your Metamask to the Ropsten network.
+
+Clone the repository
 ```
-gh repo clone CrazyCanadia/Coin-Flip-Dapp---IvanOnTech-SC201
+git clone https://github.com/CrazyCanadia/Coin-Flip-Dapp---IvanOnTech-SC201.git
 ```
 
-Install NPM packages
+Install NPM packages in the root directory of this project.
 ```
 npm install
 ```
 
 run python local web server (localhost:8000)
 ```
-python3 -m http.server
+py -m http.server
 ```
