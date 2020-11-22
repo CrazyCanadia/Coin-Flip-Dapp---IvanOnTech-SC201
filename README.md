@@ -5,6 +5,8 @@
 
 This is a Coin Flip betting dapp built for the ethereum ecosystem. It has been made for educational purposes only as the final assignment in the IvanOnTech Academy's Ethereum Smart Contract Programming 201 course. This may, and almost certainly, contains bugs, errors, and inefficiencies. This is not intended for mainnet use. This is only intended for testnet play and discovery.
 
+**-**Updated: These smart contracts have been updated to be upgradable following my completion of the IvanOnTech Smart Contract Security Course**
+
 If you gain some knowledge from this, I am glad. I have certainly learned a lot making it.
 
  <img src="/Click the Coin.jpg" alt="Dapp Example Screenshot">
