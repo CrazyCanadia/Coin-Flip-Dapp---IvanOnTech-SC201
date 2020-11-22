@@ -2,6 +2,7 @@
 var extra;
 var waitNotice;
 var id;
+var tOut;
 
 
 function configAmount(depositAmount, denomination){
@@ -48,6 +49,9 @@ function resetBar(){
   elem1.style.width = 0 + "%";
   var elem2 = document.getElementById("color_bar_yellow");
   elem2.style.width = 0 + "%";
+  var elem3 = document.getElementById("color_bar_red");
+  elem3.style.width = 0 + "%";
+  $("#color_bar_red").hide();
   $("#color_bar_yellow").hide();
   $("#color_bar").hide();
 }
@@ -57,6 +61,7 @@ function disableButtons(){
   document.getElementById("deposit_button").disabled = true;
   document.getElementById("withdraw_button").disabled = true;
   document.getElementById("destroy_button").disabled = true;
+  document.getElementById("upgrade_button").disabled = true;
 }
 
 function enableButtons(){
@@ -64,6 +69,7 @@ function enableButtons(){
   document.getElementById("deposit_button").disabled = false;
   document.getElementById("withdraw_button").disabled = false;
   document.getElementById("destroy_button").disabled = false;
+  document.getElementById("upgrade_button").disabled = false;
 }
 
 function progressBar() {
@@ -84,6 +90,14 @@ function progressBar() {
         elem = document.getElementById("color_bar_yellow");
         elem.style.width = 100 + "%";
         progress = 0;
+        tOut = setTimeout(function () {
+          $("#color_bar_yellow").hide();
+          $("#color_bar_red").show();
+          elem = document.getElementById("color_bar_red");
+          elem.style.width = 100 + "%";
+          $("#place_bet").hide();
+          $("#refund_bet").show();
+        }, 30000);
         // console.log("3");
       } else {
       // console.log("2");
@@ -107,16 +121,9 @@ function logReceipt(receipt){
   console.log("---  ---");
 }
 
-/* function displayTx(hash){
-  //Potential to implement later...
-  // $("#etherscan_icon").fadeIn("slow");
-  // waitNotice = setInterval(function () {
-  //   $("#etherscan_icon").animate({opacity: "1"}, "slow");
-  //   setTimeout(function () {
-  //     $("#etherscan_icon").animate({opacity: ".1"}, "slow");
-  //   }, 3000);
-  // }, 4000);
- }*/
+function contractInfo(){
+  document.getElementById("current_address").innerHTML = "The contract address is <a href='https://ropsten.etherscan.io/address/0x5aaae9eaac0fc01d9fbc5d39a34c3e2c7392d2ce' target='_blank'>here.</a>";
+}
 
 function notify(noteType, data){
   /* Here we have the following notice types for the function notify
@@ -156,15 +163,6 @@ function notify(noteType, data){
         $("#loser_notice").fadeOut();
       }, 5000);
     break;
-
-    /* case "cancel": //This has bene deprecated
-    //   notify("clear");
-    //   document.getElementById("cancel_notice").innerHTML = "You cancelled your bet. It has been deposited into your contract account.";
-    //   $("#cancel_notice").fadeIn();
-    //   setTimeout(function () {
-    //     $("#cancel_notice").fadeOut();
-    //   }, 3000);
-    // break; */
 
     case "destroy":
       $("#betting_section").hide();
@@ -210,11 +208,29 @@ function notify(noteType, data){
       }, 5000);
     break;
 
+    case "refund":
+      temp = parseFloat(data);
+      extra = (" " + temp.toFixed(3) + " Eth");
+      document.getElementById("refund_notice").innerHTML = "Please try again.<br>Your bet was refunded.<br>" + extra;
+      $("#refund_notice").fadeIn();
+      setTimeout(function () {
+        $("#refund_notice").fadeOut();
+      }, 5000);
+    break;
+
     case "error":
       document.getElementById("error_notice").innerHTML = "There was an error... no transaction happened.<br> Please try again.";
       $("#error_notice").fadeIn();
       setTimeout(function () {
         $("#error_notice").fadeOut();
+      }, 5000);
+    break;
+
+    case "upgrade":
+      document.getElementById("upgrade_notice").innerHTML = "You have successfully upgraded this contract.";
+      $("#upgrade_notice").fadeIn();
+      setTimeout(function () {
+        $("#upgrade_notice").fadeOut();
       }, 5000);
     break;
 
@@ -299,7 +315,7 @@ function notify(noteType, data){
       progressBar();
       $("#betMessage").hide();
       // $("#place_bet").hide();
-      // $("#cancel_bet").show();
+      // $("#refund_bet").show();
     }, 3000);
     break;
 
@@ -321,6 +337,7 @@ function notify(noteType, data){
       $("#owner_notice").fadeOut();
       $("#provider_notice").fadeOut();
       $("#waiting_notice").fadeOut();
+      $("#upgrade_notice").fadeOut();
     break;
 
     case "clearMsg":
@@ -378,6 +395,10 @@ async function getDataForFrontEnd(){
                       await contractInstance.methods.getUserBet().call().then(async function(_betAmount){//Get the contract's Generation number
                         betAmount = parseFloat(_betAmount);
                         // console.log("betAmount : " + betAmount);
+                        await contractInstance.methods.currentAddress().call().then(async function(_currentAddress){//Get the contract's Generation number
+                          currentBEAddress = _currentAddress;
+                          // console.log("betAmount : " + betAmount);
+                        });
                       });
                     });
                   });

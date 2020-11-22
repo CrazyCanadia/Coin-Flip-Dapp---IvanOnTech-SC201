@@ -1,5 +1,5 @@
-const Ownable = artifacts.require("Ownable");
+const Storage = artifacts.require("Storage");
 
 module.exports = function(deployer) {
-  deployer.deploy(Ownable);
+  deployer.deploy(Storage);
 };

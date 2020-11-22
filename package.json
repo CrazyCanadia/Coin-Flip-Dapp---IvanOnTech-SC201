@@ -15,5 +15,13 @@
     "@popperjs/core": "^2.5.4",
     "@truffle/hdwallet-provider": "^1.2.0"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CrazyCanadia/Coin-Flip-Dapp---IvanOnTech-SC201.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CrazyCanadia/Coin-Flip-Dapp---IvanOnTech-SC201/issues"
+  },
+  "homepage": "https://github.com/CrazyCanadia/Coin-Flip-Dapp---IvanOnTech-SC201#readme"
 }

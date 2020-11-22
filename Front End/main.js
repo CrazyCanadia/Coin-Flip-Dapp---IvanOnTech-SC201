@@ -25,11 +25,13 @@ var betsAllowed;
 var self_destruct_timer = 0;
 var activeBets;
 var lastQuery;
+var currentBEAddress;  //This it the address of the functional contract on the backend of the proxy
+var tempBEAddress;
 
 
 $(document).ready(function() {
     window.ethereum.enable().then(function(accounts){
-      contractInstance = new web3.eth.Contract(abi, "0x0B311F2C3Aa1c851A32F81c61d80e3d8C0DF9883", {from: accounts[0]});
+      contractInstance = new web3.eth.Contract(abi, "0x5AAae9EaAc0fc01d9FBC5d39a34C3E2c7392D2Ce", {from: accounts[0]}); //The proxy address stays the same.
       //Verify that there is an existing contract - that it hasn't been destroyed.
       contractInstance.methods.owner().call().then(function(result){
         ownerAddress = result;
@@ -38,6 +40,11 @@ $(document).ready(function() {
           notify("destroy");
       });
       getDataForFrontEnd().then(function(){
+        contractInfo();
+        //Playing to see what happens when avoiding the proxy with the below address of the back end
+        contractInstanceBE = new web3.eth.Contract(abi, currentBEAddress, {from: accounts[0]}); //The backend address changes
+        // console.log("The backend address is: ");
+        // console.log(currentBEAddress);
         updateContractBalance();
         if(!betsAllowed){
           notify("clearMsg");
@@ -71,13 +78,14 @@ $(document).ready(function() {
         }
         else {
           if (betAmount != 0){
+            // console.log("The current betAmount is: ");
+            // console.log(betAmount);
             disableButtons();
             notify("clear");
             notify("animateGo");
             notify("waiting");
             $("#betMessage").hide();
-            $("#place_bet").hide();
-            $("#cancel_bet").show();
+            $("#place_bet").show();
             lastQuery = sessionStorage.lastQuerySS;
             progressBar();
           } else if(ownerAddress == fromAddress){
@@ -89,7 +97,7 @@ $(document).ready(function() {
               updateProviderBalance();
             }
           } else
-          if((userGenNum == contractGen && userGenNum != 0 && lp_balance != 0) ){//The Non-onwer user has some current Gen LP tokens
+          if((userGenNum == contractGen && userGenNum != 0 && lp_balance != 0) ){//The Non-owner user has some current Gen LP tokens
             entitled_share = parseFloat((lp_balance * contractBalance) / totalLPpool );
             updateProviderBalance();
             notify("clear");
@@ -108,6 +116,7 @@ $(document).ready(function() {
             notify("hello");
           }
         }
+
 
         contractInstance.getPastEvents('LogNewProvableQuery', {
             filter: {}, // Using an array means OR: e.g. 20 or 23
@@ -149,60 +158,60 @@ $(document).ready(function() {
             });
         });
 
-      //----------------Listening for bet events------------------//
+        //----------------Listening for bet events------------------//
 
-      contractInstance.events.LogNewProvableQuery(function(error, result){
-        if(!error){
-          lastQuery = result.returnValues[1];
-          sessionStorage.lastQuerySS = lastQuery;
-          // storeLogData(result);
-        } else {
-          console.log(error);
-        }
-      });
-      contractInstance.events.winningResult(function(error, result){
-        if(!error){
-          if( (lastQuery == result.returnValues[1]) && (fromAddress == result.returnValues[2]) ){
-            listenForWin(result);
+        contractInstance.events.LogNewProvableQuery(function(error, result){
+          if(!error){
+            lastQuery = result.returnValues[1];
+            sessionStorage.lastQuerySS = lastQuery;
+            // storeLogData(result);
+          } else {
+            console.log(error);
           }
-        } else {
-          console.log(error);
-        }
-      });
-      contractInstance.events.losingResult(function(error, result){
-        if(!error){
-          if( (lastQuery == result.returnValues[1]) && (fromAddress == result.returnValues[2]) ){
-            listenForLoss(result);
+        });
+        contractInstance.events.winningResult(function(error, result){
+          if(!error){
+            if( (lastQuery == result.returnValues[1]) && (fromAddress == result.returnValues[2]) ){
+              listenForWin(result);
+            }
+          } else {
+            console.log(error);
           }
-        } else {
-          console.log(error);
-        }
-      });
+        });
+        contractInstance.events.losingResult(function(error, result){
+          if(!error){
+            if( (lastQuery == result.returnValues[1]) && (fromAddress == result.returnValues[2]) ){
+              listenForLoss(result);
+            }
+          } else {
+            console.log(error);
+          }
+        });
 
-      //---------------Listening for destroy events--------------//
+        //---------------Listening for destroy events--------------//
 
-      contractInstance.events.contractDestroyed(function(error, result){
-        if(!error){
-          officiallyDestroyed(result);
-        } else {
-          console.log(error);
-        }
-      });
-      contractInstance.events.contractClosingDown(function(error, result){
-        if(!error){
-          closingDown(result);
-        } else {
-          console.log(error);
-        }
-      });
-      contractInstance.events.waitingForProviders(function(error, result){
-        if(!error){
-          waitingToClose(result);
-        } else {
-          console.log(error);
-        }
-      });
-      });
+        contractInstance.events.contractDestroyed(function(error, result){
+          if(!error){
+            officiallyDestroyed(result);
+          } else {
+            console.log(error);
+          }
+        });
+        contractInstance.events.contractClosingDown(function(error, result){
+          if(!error){
+            closingDown(result);
+          } else {
+            console.log(error);
+          }
+        });
+        contractInstance.events.waitingForProviders(function(error, result){
+          if(!error){
+            waitingToClose(result);
+          } else {
+            console.log(error);
+          }
+        });
+        });
 
   });
 
@@ -212,7 +221,8 @@ $(document).ready(function() {
     $("#withdraw_button").click(withdrawFromContract);
     $("#destroy_button").click(destroyContract);
     $("#bet_amount").click(updateFee);
-    // $("#cancel_bet").click(cancelBet);
+    $("#upgrade_button").click(updateContract);
+    $("#refund_bet").click(refundBet);
 
 });
 
@@ -353,9 +363,11 @@ function withdrawFromContract(){
   .on("receipt", function(receipt){
       logReceipt(receipt);
       if(receipt.events.transferOK){
+        var tmp = receipt.events.transferOK.returnValues[1];
+        tmp = tmp / 1000000000000000000;
         clearInterval(waitNotice);
         notify("animateStop");
-        contractBalance -= entitled_share;
+        contractBalance -= temp;
         totalLPpool = totalLPpool - lp_balance;
         userBalance = 0;
         entitled_share = 0;
@@ -365,7 +377,7 @@ function withdrawFromContract(){
           $("#closingMessage").show();
         }
         notify("clear");
-        notify("withdraw", entitled);
+        notify("withdraw", tmp);
       }
       if(receipt.events.updateGen){
         //This would be to display the Gen at this time... (not needed really)
@@ -387,6 +399,52 @@ function withdrawFromContract(){
       updateContractBalance();
       $("#withdraw_section").hide();
   });
+}
+
+function refundBet(){
+  document.getElementById("refund_bet").disabled = true;
+  $("#sendingMessage").hide();
+  $("#refundMessage").show();
+
+  contractInstance.methods.refundBet().send()
+  .on("transactionHash", function(hash){
+      logTx(hash);
+  })
+  .on("receipt", function(receipt){
+      logReceipt(receipt);
+      if(receipt.events.refundedBet){
+        var tmp = receipt.events.refundedBet.returnValues[1];
+        tmp = tmp / 1000000000000000000;
+        clearInterval(waitNotice);
+        notify("clearMsg");
+        notify("animateStop");
+        notify("clear");
+        notify("refund", tmp);
+        if(!betsAllowed){
+          $("#betMessage").hide();
+          $("#closingMessage").show();
+        }
+      }
+  })
+  .on("error", function(error){
+    clearInterval(waitNotice);
+    notify("clear");
+    notify("animateStop");
+    notify("error");
+    enableButtons();
+  })
+  .then(function(){
+    document.getElementById("refund_bet").disabled = false;
+    $("#refund_bet").hide();
+    $("#place_bet").show();
+    resetBar();
+    enableButtons();
+    updateContractBalance();
+    updateProviderBalance();
+    $("#withdraw_section").show();
+  });
+
+
 }
 
 function destroyContract(){
@@ -439,6 +497,7 @@ function destroyContract(){
 function listenForWin(result){
   console.log("----------- ------You Won!------- ------------");
       if (betAmount != 0){ // It is 0 if they cancelled the bet.
+        clearTimeout(tOut);
         clearInterval(id);
         clearInterval(waitNotice);
         var winAmount = (betAmount * 2);
@@ -455,7 +514,9 @@ function listenForWin(result){
         // console.log("The tmp win amount is: ");
         // console.log(tmp);
         notify("winner", tmp);
-        $("#withdraw_section").show();
+        if (userBalance != 0){
+          $("#withdraw_section").show();
+        }
         enableButtons();
         updateProviderBalance();
         updateContractBalance();
@@ -469,6 +530,7 @@ function listenForWin(result){
 function listenForLoss(result){
     console.log("----------- -----You Lost!------- ------------");
       if (betAmount != 0){ // It is 0 if they cancelled the bet.
+        clearTimeout(tOut);
         clearInterval(id);
         clearInterval(waitNotice);
         contractBalance += betAmount;
@@ -521,42 +583,60 @@ function waitingToClose() {
 }
 
 
-/*  function cancelBet(){
-  // The related cancelBet function has been deprecated.
-  //   disableButtons();
-  //   clearInterval(id)
-  //   $("#progress_bar").hide();
-  //   console.log("The userBalance is: ");
-  //   console.log(userBalance);
-  //
-  //   contractInstance.methods.cancelBet().send()
-  //   .on("transactionHash", function(hash){
-    //       logTx(hash);
-    //   })
-    //   .on("receipt", function(receipt){
-      //       logReceipt(receipt);
-      //   })
-      //   .on("error", function(error){
-        //     notify("animateStop");
-        //     notify("clear");
-        //     notify("error");
-        //     enableButtons();
-        //   }).then(function(){
-          //     userBalance += betAmount;
-          //     betAmount = 0;
-          //     notify("clear");
-          //     notify("clearMsg");
-          //     clearInterval(waitNotice);
-          //     notify("animateStop");
-          //     $("#betMessage").show();
-          //     resetBar();
-          //     $("#cancel_bet").hide();
-          //     $("#place_bet").show();
-          //     notify("cancel");
-          //     enableButtons();
-          //     $("#withdraw_section").show();
-          //     updateProviderBalance();
-          //     updateContractBalance();
-          //     return;
-          //   });
-        } */
+function updateContract() {
+  disableButtons();
+  notify("clearMsg");
+  notify("clear");
+  notify("animateGo");
+  notify("waiting");
+
+  scrollUp();
+  tempBEAddress = $("#Update_backend").val();
+  console.log("The UpdateBE function was called.");
+  contractInstance.methods.upgrade(tempBEAddress).send()
+  .on("transactionHash", function(hash){
+      console.log("This is the Txhash");
+      console.log(hash);
+  })
+  .on("receipt", function(receipt){
+    console.log("This is the receipt");
+    console.log(receipt);
+  })
+  .on("error", function(error){
+    console.log("This is the error");
+    console.log(error);
+    clearInterval(waitNotice);
+    notify("clear");
+    notify("animateStop");
+    notify("error");
+    enableButtons();
+  })
+  .then(function(){
+    contractInstanceBE.methods.selfDestruct().send()
+    .on("transactionHash", function(hash){
+        console.log("This is the Txhash");
+        console.log(hash);
+    })
+    .on("receipt", function(receipt){
+      console.log("This is the receipt");
+      console.log(receipt);
+      clearInterval(waitNotice);
+      notify("clear");
+      notify("animateStop");
+    })
+    .on("error", function(error){
+      console.log("This is the error");
+      console.log(error);
+      clearInterval(waitNotice);
+      notify("clear");
+      notify("animateStop");
+      notify("error");
+      enableButtons();
+    })
+    .then(function(){
+      currentBeAddress = tempBEAddress;
+      enableButtons();
+      notify("upgrade");
+    });
+  });
+}

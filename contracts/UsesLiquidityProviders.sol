@@ -1,33 +1,13 @@
-import "./Ownable.sol";
+import "./Storage.sol";
 import "./SafeMath.sol";
 
 pragma solidity 0.5.12;
 
-contract UsesLiquidityProviders is Ownable {
+contract UsesLiquidityProviders is Storage {
 
   using SafeMath for uint256;
 
-  uint256 public LPTokenPool;
-  uint256 public currentLPGen;
-  //uint public totalLPTokens;
-
-  struct LP_Provider {
-    uint256 genNum;
-    uint256 LP_token_amount;
-  }
-
-  mapping (address => LP_Provider) public m_LP_tokens;
-
-
   event mintedLPTokens(string description);
-
-
-  constructor () public {
-    LPTokenPool = 0;
-    currentLPGen = 0;
-    //totalLPTokens = 0;
-  }
-
 
   function mintAmount(uint256 _deposit, uint256 _contractBalance, address _provider) internal returns(uint256 _mintAmount){
     if (_contractBalance <= MIN_BET){//If the contract has almost no money start a new Gen

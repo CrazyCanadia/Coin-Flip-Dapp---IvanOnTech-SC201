@@ -1,10 +1,10 @@
-import "./Ownable.sol";
+import "./Storage.sol";
 import "./UsesLiquidityProviders.sol";
 import "./SafeMath.sol";
 
 pragma solidity 0.5.12;
 
-contract Destroyable is Ownable, UsesLiquidityProviders {
+contract Destroyable is Storage, UsesLiquidityProviders {
 
   using SafeMath for uint256;
 
@@ -14,9 +14,9 @@ contract Destroyable is Ownable, UsesLiquidityProviders {
 
     function destroy() public onlyOwner {
 
-      if (SELF_DESTRUCT_TIMER == 0 || SELF_DESTRUCT_TIMER >= block.number){//Establishing a 3 block timmer... just for fun... not needed.
+      if (!SELF_DESTRUCT_TIMER){//Establishing a 3 block timmer... just for fun... not needed.
         betsAllowed = false;
-        SELF_DESTRUCT_TIMER = block.number.add(3);
+        SELF_DESTRUCT_TIMER = true;
         emit contractClosingDown("The contract is shutting down... No more bets. Withdraw your funds.");
       } else if (contractBalance == 0 && activeBets == 0) {//Otherwise, if the contract is empty it can be deleted.
         address payable receiver = msg.sender;

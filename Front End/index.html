@@ -124,9 +124,9 @@
                           <p>This was made as an educational project. It should ***NOT*** be used for mainnet deployment.
                             Any use of this contract is done so at your own risk. There may be bugs, problems, and potential vulnerabilities.
                             In case of emergency the creator of this contract can destroy it. If the contract is ever deactivated all useres
-                            can still withdraw their liquidity and/or contract balances before final closing.</p>
-                            <p>All balances shown are not exact due to gas fees and rounding.</p>
-                          <p>The coin animation was found here: https://www.artstation.com/artwork/lVGY5O <br> created by Rade Radevski</p><br>
+                            can still withdraw their liquidity and/or contract balances before final closing. <strong>All balances shown are not exact due to gas fees and rounding.</strong></p>
+                          <p>The coin animation was found <a href="https://www.artstation.com/artwork/lVGY5O" target="_blank">here:</a> created by Rade Radevski</p><br>
+                          <p id="current_address" class="text-center"></p>
                           <p class="text-center" >This Dapp has been a @CrazyCanadia creation.</p>
                       </div>
                       </div>
@@ -165,11 +165,13 @@
         </div>
         <div id="waitingForProviders_notice" class="overlay card-body bg-warning text-white text-center notify_text">
         </div>
-        <!--<div id="cancel_notice" class="overlay card-body bg-danger text-white text-center notify_text">
-        </div>  The related cancel function has been deprecated-->
+        <div id="upgrade_notice" class="overlay card-body bg-danger text-white text-center notify_text">
+        </div>
+        <div id="refund_notice" class="overlay card-body bg-danger text-white text-center notify_text">
+        </div>
 
         <div>
-          <h1 class="card-title mx-auto text-center">Coin Flip Dapp</h1>
+          <h1 class="card-title mx-auto text-center"><a class="text-dark" href='https://ropsten.etherscan.io/address/0x5aaae9eaac0fc01d9fbc5d39a34c3e2c7392d2ce' target='_blank'>Coin Flip Dapp</a></h1>
         </div>
         <div class="container">
           <img id="coinImage" src="coin.jpg" height="160px" width="120px" class="card-img-top" onclick="notify('rulesOn')" alt="https://www.artstation.com/artwork/lVGY5O created by Rade Radevski">
@@ -187,11 +189,13 @@
               <div id="waitingMessage" class="mx-3  my-1 notify_text" ><p>Awaiting a response...</p></div>
               <div id="closingMessage" class="mx-3  my-1 notify_text" ><p>The contract is closing. Withdraw your funds.</p></div>
               <div id="deletedMessage" class="mx-3  my-1 notify_text" ><p>The contract has been destroyed.</p></div>
+              <div id="refundMessage" class="mx-3  my-1 notify_text" ><p>We are refunding your bet.</p></div>
             </div>
           </div>
           <div id="progress_bar" class="mx-5">
             <div id="color_bar" class="progress-bar bg-primary progress-bar-striped progress-bar-animated notify_text text-dark mb-1" style="width:0%">Estimated wait time...</div>
             <div id="color_bar_yellow" class="progress-bar bg-warning progress-bar-striped progress-bar-animated notify_text text-dark mb-1" style="width:0%">It should be soon, really...</div>
+            <div id="color_bar_red" class="progress-bar bg-danger progress-bar-striped progress-bar-animated notify_text text-white mb-1" style="width:0%">The Oracle failed. Refund your Bet.</div>
           </div>
 
           <div id="betting_section" >
@@ -219,8 +223,8 @@
               <p id="contract_balance_eth" class="mx-1"></p>
             </div>
             <div class="d-flex justify-content-center">
-              <button class="btn btn-primary m-3 shadow-sm" id="place_bet">Place Your Bet</button>
-              <!-- Deprecated cancel button <button class="btn btn-danger m-3 shadow-sm notify_text" id="cancel_bet">Cancel Your Bet</button>-->
+              <button class="btn btn-primary mx-3 mb-3 shadow-sm" id="place_bet">Place Your Bet</button>
+              <button class="btn btn-danger m-3 shadow-sm notify_text" id="refund_bet">Refund Your Bet</button>
               <div id="etherscan_icon" class="fas fa-external-link mt-3 mx-5 etherscan notify_text" style='font-size:24px'></div>
             </div>
           </div>
@@ -230,7 +234,7 @@
               <form class="form-inline">
                 <div>
                   <label class="sr-only">Deposit Amount</label>
-                  <input class="form-control mx-3 shadow-sm" id="deposit_amount" placeholder="How much to deposit?">
+                  <input class="form-control mx-3 mt-3 shadow-sm" id="deposit_amount" placeholder="How much to deposit?">
                 </div>
                 <div class="input-group">
                   <select class="custom-select shadow-sm" id="deposit_denomination">
@@ -254,6 +258,12 @@
           </div>
 
           <div id="owner_section" class="owner mt-2">
+            <div class="d-flex justify-content-center m-5">
+              <button class="btn btn-danger shadow-sm" id="upgrade_button">Upgrade</button>
+            </div>
+            <div>
+              <input class="form-control shadow-sm" autocomplete="off" id="Update_backend" placeholder="New Address">
+            </div>
             <div class="d-flex justify-content-center m-5">
               <button class="btn btn-danger shadow-sm" id="destroy_button">DESTROY</button>
             </div>
